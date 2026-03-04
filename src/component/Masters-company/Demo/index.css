@@ -1,0 +1,39 @@
+.h5 {
+    text-align: center;
+    background-color: rgb(46, 10, 207);
+    font-size: 24px !important;
+    color: white;
+    margin-bottom: 10px !important;
+}
+
+.container{
+    display:grid;
+    column-gap:50px;
+    padding:10px;
+   
+}
+.first .MuiOutlinedInput-root{
+    margin-right:250px !important;
+    border-radius: 15px;
+    background-Color: #f3f5ee;
+}
+  
+.second .MuiOutlinedInput-root{
+    margin-right:10px ;
+    border-radius: 15px !important;
+    background-Color: #f3f5ee;
+}
+.button {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 50px;
+ 
+}
+
+.button .MuiButton-root {
+    border-radius: 12px !important;
+}
+.radio .MuiRadio-root {
+    margin-left: 100px; /* Align to the left */
+}

@@ -1,0 +1,581 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.css-flbe84-MuiDayCalendar-weekContainer {
+  width: 800px !important; /* Set width to 800px */
+  height: 100px;
+}
+.css-rhmlg1-MuiTypography-root-MuiDayCalendar-weekDayLabel {
+  width: 110px !important;
+}
+
+.css-1vwnylm-MuiDateCalendar-root {
+  max-width: none !important; /* Remove max width */
+  max-height: 800px; /* Set max height if needed */
+}
+
+.css-i5q14k-MuiDayCalendar-header {
+  width: 800px !important; /* Set width to 800px */
+}
+
+.css-rhmlg1-MuiTypography-root-MuiDayCalendar-weekDayLabel {
+  width: 800px;
+  height: 100px;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+.css-4d6t4q-MuiDateCalendar-root {
+  width: 880px !important;
+}
+.css-rhmlg1-MuiTypography-root-MuiDayCalendar-weekDayLabel {
+  width: 107px;
+  height: 100px;
+}
+
+.css-4d6t4q-MuiDateCalendar-root .MuiPickersDay-root {
+  border-radius: none !important;
+  border-radius: 1px;
+}
+
+.css-1t0788u-MuiPickersSlideTransition-root-MuiDayCalendar-slideTransition {
+  height: 800px !important;
+}
+
+.css-4d6t4q-MuiDateCalendar-root {
+  height: 800px !important;
+  max-height: none !important;
+}
+
+.css-23p0if-MuiButtonBase-root-MuiPickersDay-root:not(.Mui-selected) {
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  background-color: rgb(154, 255, 96);
+}
+.MuiPickersDay-weekday {
+  background-color: "rgba(154, 255, 96, 0.5)";
+}
+
+.chatbot-container {
+  background-color: #eeffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.chatbot-header {
+  border-radius: 8px 8px 0 0;
+}
+
+.chatbot-messages {
+  border-radius: 0 0 8px 8px;
+}
+
+.message {
+  max-width: 40%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+.message.user {
+  background-color: #3e3d3d;
+  max-width: 50%;
+  text-align: left;
+  float: left;
+  font-family: "Arial";
+}
+
+.message.bot {
+  background-color: #00bcd4;
+  max-width: 100%;
+  text-align: left;
+  float: right;
+}
+
+.chatbot-buttons button {
+  margin: 4px;
+}
+
+.chatbot-input {
+  display: flex;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.chatbot-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+.popup {
+  display: none;
+  position: absolute;
+  background-color: white;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  z-index: 1000;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.popup.open {
+  display: block;
+}
+.Background {
+  background-color: #ccc;
+}
+.active{ 
+  border-left: 4px solid #00B5B1!important ;
+      color: #00B5B1!important;
+      background-color: #EAF9F9!important;
+  position: relative;
+  }
+  .pending{
+    border-right: none ;
+    color: #000000!important;
+    background-color: #EAF9F9;
+
+  }
+.stepperWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+  /* Stepper.css */
+
+/* Overall container for the entire stepper and its content */
+.stepperOuterContainer {
+    flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+ 
+  font-family: 'Inter', sans-serif; /* Using Inter font */
+  background-color: #f5f5f5; /* Light background for the whole area */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Soft shadow */
+  margin-top: 100px;
+  
+}
+
+.custom-readonly-textfield .MuiOutlinedInput-root {
+  background-color: #fff;
+  border-radius: 10px;
+}
+
+.custom-readonly-textfield .MuiOutlinedInput-root fieldset {
+  border-width: 2px;
+  border-radius: 8px;
+}
+
+.custom-readonly-textfield .MuiOutlinedInput-root:hover fieldset {
+  border-color: black;
+}
+
+.custom-readonly-textfield .MuiOutlinedInput-root.Mui-focused fieldset {
+  border-color: black;
+}
+
+.custom-readonly-textfield .MuiOutlinedInput-root.Mui-error fieldset {
+  border-color: black;
+}
+
+/* Label - always black */
+.custom-readonly-textfield .MuiInputLabel-root {
+  color: black !important;
+}
+
+.custom-readonly-textfield .MuiInputLabel-root.Mui-focused {
+  color: black !important;
+}
+
+.custom-readonly-textfield .MuiInputLabel-root.Mui-error {
+  color: black !important;
+}
+
+.custom-readonly-textfield .MuiInputLabel-root.Mui-disabled {
+  color: black !important;
+}
+
+
+
+/* Container for the horizontal stepper steps */
+.stepperContainer {
+  width: 100%;
+  max-width: 1700px;
+  display: flex; /* Arranges steps horizontally */
+  justify-content: space-between; /* Distributes steps evenly across the width */
+  align-items:center;
+  justify-content: center; /* Aligns items to the top, useful if labels wrap */
+  margin-bottom: 20px; /* Space below the stepper visual */
+}
+
+/* Wrapper for each individual step (icon + label) */
+.stepWrapper {
+  display: flex;
+  flex-direction: column; /* Stacks icon above text */
+  align-items: center; /* Centers icon and text horizontally within its column */
+  flex-shrink: 0; /* Prevents steps from shrinking excessively */
+  padding: 0 5px; /* Small horizontal padding around each step */
+}
+
+/* Styling for the circular step icon (the number/checkmark) */
+.stepIcon {
+  width: 32px; /* Diameter of the circle */
+  height: 32px; /* Diameter of the circle */
+  border-radius: 50%; /* Makes it a perfect circle */
+  background-color: #e0e0e0; /* Light grey for inactive steps */
+  border: 1px solid #bdbdbd; /* Subtle border for inactive */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #757575; /* Darker grey text for inactive numbers */
+  font-size: 15px;
+  font-weight: 500; /* Medium font weight */
+  cursor: pointer; /* Indicates it's clickable */
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; /* Smooth transitions */
+  position: relative; /* Needed for z-index and potential pseudo-elements */
+  z-index: 2; /* Ensures the icon is above the connector line */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Small shadow for depth */
+}
+
+/* Styles for the active step icon */
+.stepIconActive {
+  background-color: #e74c3c; /* Red color for the active step */
+  border-color: #e74c3c; /* Red border for the active step */
+  color: #ffffff; /* White text for the active step */
+  box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3); /* More prominent shadow for active */
+}
+
+/* Styles for a completed step icon */
+.stepIconCompleted {
+  background-color: #e74c3c; /* Red color for completed steps */
+  border-color: #e74c3c; /* Red border for completed steps */
+  color: #ffffff; /* White text for completed steps */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Consistent shadow */
+}
+
+/* Pseudo-element for the checkmark in completed steps */
+.stepIconCompleted::before {
+  content: '✓'; /* Unicode checkmark character */
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Hides the number span when the step is completed (as the checkmark is used) */
+.stepIconCompleted span {
+  display: none;
+}
+
+/* Styling for the connector line between steps */
+.stepConnector {
+  flex: 1; /* Allows the line to stretch and take available space */
+  height: 2px; /* Thickness of the line */
+  background-color: #e0e0e0; /* Light grey for inactive lines */
+  margin: 0 10px; /* Space between the icon and the line */
+  transition: background-color 0.3s ease; /* Smooth transition for color change */
+  align-self: center; /* Vertically centers the line with the icons */
+  z-index: 1; /* Ensures the line is behind the icons */
+}
+
+/* Styles for active/completed connector lines */
+.stepConnectorActive {
+  background-color: #e74c3c; /* Red for active/completed lines */
+}
+
+/* Styling for the step label text */
+.stepLabel {
+  text-align: center;
+  margin-top: 8px; /* Space between the icon and the label */
+  font-size: 14px;
+  color: #757575; /* Default text color */
+  font-weight: 400; /* Regular font weight */
+  transition: color 0.3s ease, font-weight 0.3s ease; /* Smooth transitions */
+  line-height: 1.3; /* Improve readability for multi-line labels */
+  max-width: 100px; /* Limit width to encourage wrapping if needed */
+}
+
+/* Styles for the active step label */
+.stepLabelActive {
+  color: #e74c3c; /* Red for the active label */
+  font-weight: 600; /* Bolder font weight for active label */
+}
+
+/* Styles for completed step labels */
+.stepLabelCompleted {
+  color: #e74c3c; /* Red for completed labels */
+}
+
+/* Hide the connector line after the last step */
+.stepWrapper:last-child + .stepConnector {
+  display: none;
+}
+
+/* Basic button styling for consistency */
+button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+button:hover:not(:disabled) {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Stepper.css */
+
+/* Overall container for the entire stepper and its content */
+.stepperOuterContainer {
+  padding: 20px;
+  font-family: 'Inter', sans-serif; /* Using Inter font */
+  background-color: #f9f9f9; /* Light background for the whole area */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Soft shadow */
+}
+
+/* Container for the horizontal stepper steps */
+.stepperContainer {
+  width: 100%;
+  display: flex; /* Arranges steps horizontally */
+  justify-content: space-between; /* Distributes steps evenly across the width */
+  align-items: flex-start; /* Aligns items to the top, useful if labels wrap */
+  margin-bottom: 20px; /* Space below the stepper visual */
+}
+
+/* Wrapper for each individual step (icon + label) */
+.stepWrapper {
+  display: flex;
+  flex-direction: column; /* Stacks icon above text */
+  align-items: center; /* Centers icon and text horizontally within its column */
+  flex-shrink: 0; /* Prevents steps from shrinking excessively */
+  padding: 0 5px; /* Small horizontal padding around each step */
+}
+
+/* Styling for the circular step icon (the number/checkmark) */
+.stepIcon {
+  width: 32px; /* Diameter of the circle */
+  height: 32px; /* Diameter of the circle */
+  border-radius: 50%; /* Makes it a perfect circle */
+  background-color: #e0e0e0; /* Light grey for inactive steps */
+  border: 1px solid #bdbdbd; /* Subtle border for inactive */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #757575; /* Darker grey text for inactive numbers */
+  font-size: 15px;
+  font-weight: 500; /* Medium font weight */
+  cursor: pointer; /* Indicates it's clickable */
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; /* Smooth transitions */
+  position: relative; /* Needed for z-index and potential pseudo-elements */
+  z-index: 2; /* Ensures the icon is above the connector line */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Small shadow for depth */
+}
+
+/* Styles for the active step icon */
+.stepIconActive {
+  background-color: #e74c3c; /* Red color for the active step */
+  border-color: #e74c3c; /* Red border for the active step */
+  color: #ffffff; /* White text for the active step */
+  box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3); /* More prominent shadow for active */
+}
+
+/* Styles for a completed step icon */
+.stepIconCompleted {
+  background-color: #e74c3c; /* Red color for completed steps */
+  border-color: #e74c3c; /* Red border for completed steps */
+  color: #ffffff; /* White text for completed steps */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Consistent shadow */
+}
+
+/* Pseudo-element for the checkmark in completed steps */
+.stepIconCompleted::before {
+  content: '✓'; /* Unicode checkmark character */
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Hides the number span when the step is completed (as the checkmark is used) */
+.stepIconCompleted span {
+  display: none;
+}
+
+/* Styling for the connector line between steps */
+.stepConnector {
+  flex: 1; /* Allows the line to stretch and take available space */
+  height: 2px; /* Thickness of the line */
+  background-color: #e0e0e0; /* Light grey for inactive lines */
+  margin: 0 10px; /* Space between the icon and the line */
+  transition: background-color 0.3s ease; /* Smooth transition for color change */
+  align-self: center; /* Vertically centers the line with the icons */
+  z-index: 1; /* Ensures the line is behind the icons */
+}
+
+/* Styles for active/completed connector lines */
+.stepConnectorActive {
+  background-color: #e74c3c; /* Red for active/completed lines */
+}
+
+/* Styling for the step label text */
+.stepLabel {
+  text-align: center;
+  margin-top: 8px; /* Space between the icon and the label */
+  font-size: 14px;
+  color: #757575; /* Default text color */
+  font-weight: 400; /* Regular font weight */
+  transition: color 0.3s ease, font-weight 0.3s ease; /* Smooth transitions */
+  line-height: 1.3; /* Improve readability for multi-line labels */
+  max-width: 100px; /* Limit width to encourage wrapping if needed */
+}
+
+/* Styles for the active step label */
+.stepLabelActive {
+  color: #e74c3c; /* Red for the active label */
+  font-weight: 600; /* Bolder font weight for active label */
+}
+
+/* Styles for completed step labels */
+.stepLabelCompleted {
+  color: #e74c3c; /* Red for completed labels */
+}
+
+/* Hide the connector line after the last step */
+.stepWrapper:last-child + .stepConnector {
+  display: none;
+}
+
+/* Basic button styling for consistency */
+button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+button:hover:not(:disabled) {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Custom primary (blue) toast */
+.Toastify__toast.toast-primary {
+  background: #1976d2 !important; /* MUI primary color (blue) */
+  color: white !important;
+  font-weight: 500;
+}
+.ag-grid-rounded .ag-root-wrapper {
+  border-bottom-left-radius: 10px; /* bottom left corner */
+  border-bottom-right-radius: 10px; /* bottom right corner */
+  overflow: hidden; /* ensures rows don’t overflow the rounded corners */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15); /* optional shadow */
+  border-top-left-radius: 0; /* make sure top left is square */
+  border-top-right-radius: 0; /* make sure top right is square */
+}
+.company-appbar {
+  width: 100%;
+  max-width: 900px;             /* consistent width cap */
+  margin: 70px auto 0;          /* center horizontally */
+  min-height: 60px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: flex-start;
+}
+
+.company-toolbar {
+  display: flex;
+  justify-content: flex-start;  /* left align */
+  align-items: center;
+  height: 100%;
+  padding-left: 16px;
+}
+
+.company-title {
+  font-weight: bold;
+  color: white;
+}
+
+.ag-custom-grid {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+
+  border: 1px solid #ccc;       /* 👈 border line */
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+
+  overflow: hidden;             /* clip inner content */
+}
+
+/* apply radius + border on the ag-root-wrapper itself */
+.ag-theme-alpine .ag-root-wrapper {
+  border-radius: inherit;
+  border: 1px solid #ccc;   /* 👈 add border back */
+  overflow: hidden;
+}
+/* datagrid.css */
+.custom-row-height .MuiDataGrid-row {
+  max-height: 33px!important;
+  min-height: 33px !important;
+}
+.custom-row-height .MuiDataGrid-cell {
+  max-height: 33px !important;
+  min-height: 33px !important;
+  line-height: 33px important; /* vertically center text */
+}
+

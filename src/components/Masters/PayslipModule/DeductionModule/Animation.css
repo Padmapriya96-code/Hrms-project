@@ -1,0 +1,17 @@
+body {
+    margin: 0;
+    font-family: "Arial", sans-serif;
+    background: #1a2a6c;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  
+  button:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+  }
+  
