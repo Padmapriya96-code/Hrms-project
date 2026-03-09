@@ -192,6 +192,8 @@ public partial class HrmsystemContext : DbContext
     public DbSet<ProRataBasis> ProRataBasis { get; set; }
     public DbSet<GradeSlabBranch> GradeSlabBranches { get; set; }
     public DbSet<GradeSlabDivision> GradeSlabDivisions { get; set; }
+    public DbSet<CTCSlab> CTCSlabs { get; set; }
+    public DbSet<PaymLoanTypeMaster> PaymLoanTypeMasters { get; set; }
 
 
 
@@ -3867,7 +3869,45 @@ public partial class HrmsystemContext : DbContext
             entity.Property(e => e.Value3).HasPrecision(18, 2);
             entity.Property(e => e.Value4).HasPrecision(18, 2);
         });
+        modelBuilder.Entity<CTCSlab>(entity =>
+        {
+            entity.ToTable("CTCSlab");
+            entity.HasKey(e => e.CTCSlabID);
 
+            // Explicit column mappings
+            entity.Property(e => e.CTCSlabID).HasColumnName("CTCSlabID");
+            entity.Property(e => e.MinCTC).HasColumnName("MinCTC").HasPrecision(18, 2);
+            entity.Property(e => e.MaxCTC).HasColumnName("MaxCTC").HasPrecision(18, 2);
+            entity.Property(e => e.MaxLoanAmount).HasColumnName("MaxLoanAmount").HasPrecision(18, 2);
+            entity.Property(e => e.InterestRate).HasColumnName("InterestRate").HasPrecision(5, 2);
+            entity.Property(e => e.PnCompanyID).HasColumnName("pn_CompanyID");
+            entity.Property(e => e.PnBranchID).HasColumnName("pn_BranchID");
+            entity.Property(e => e.LoanType).HasColumnName("LoanType");
+            entity.Property(e => e.LoanID).HasColumnName("LoanID");
+        });
+        modelBuilder.Entity<PaymLoanTypeMaster>(entity =>
+        {
+            entity.ToTable("paym_LoanTypeMaster");
+
+            entity.HasKey(e => e.PnLoanTypeId)
+                  .HasName("pk_m_loantypemaster");
+
+            entity.Property(e => e.PnLoanTypeId)
+                  .HasColumnName("pn_LoanTypeID")
+                  .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.VLoanTypeName)
+                  .HasColumnName("v_LoanTypeName")
+                  .HasMaxLength(100)
+                  .IsRequired();
+
+            entity.Property(e => e.PnCompanyID)
+                  .HasColumnName("pn_CompanyID");
+
+            entity.Property(e => e.Status)
+                  .HasColumnName("status")
+                  .HasMaxLength(20);
+        });
         OnModelCreatingPartial(modelBuilder);
     }
 

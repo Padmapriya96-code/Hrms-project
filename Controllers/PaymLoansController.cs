@@ -6,116 +6,82 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HRMSAPPLICATION.Models;
+using HRMSAPPLICATION.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
+using HRMSAPPLICATION.DTO;
 
 namespace HRMSAPPLICATION.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PaymLoansController : ControllerBase
     {
-        private readonly HrmsystemContext _context;
+        private readonly TenantDbContextFactory _factory;
 
-        public PaymLoansController(HrmsystemContext context)
+        public PaymLoansController(TenantDbContextFactory factory)
         {
-            _context = context;
+            _factory = factory;
         }
-
+        private HrmsystemContext GetTenantContext()
+        {
+            return _factory.CreateFromUser(User);
+        }
         // GET: api/PaymLoans
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<PaymLoan>>> GetPaymLoans()
+        [HttpGet("{companyId}/{loanId}")]
+        public async Task<IActionResult> Get(int companyId,int loanId)
         {
-            return await _context.PaymLoans.ToListAsync();
+            using var context = GetTenantContext();
+            //use both the keys to find the record
+            var item = await context.PaymLoans.FindAsync(companyId, loanId);
+            return item == null ? NotFound() : Ok(item);
         }
-
-        // GET: api/PaymLoans/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<PaymLoan>> GetPaymLoan(int id)
-        {
-            var paymLoan = await _context.PaymLoans.FindAsync(id);
-
-            if (paymLoan == null)
-            {
-                return NotFound();
-            }
-
-            return paymLoan;
-        }
-
-        // PUT: api/PaymLoans/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPaymLoan(int id, PaymLoan paymLoan)
-        {
-            if (id != paymLoan.PnCompanyid)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(paymLoan).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PaymLoanExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/PaymLoans
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<PaymLoan>> PostPaymLoan(PaymLoan paymLoan)
+        public async Task<IActionResult> Create([FromBody] PaymLoanDto dto)
         {
-            _context.PaymLoans.Add(paymLoan);
-            try
+            using var context = GetTenantContext();
+            //generate a new loan id
+            int newLoanId = 1;
+            var newLoan = new PaymLoan
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (PaymLoanExists(paymLoan.PnCompanyid))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                PnCompanyid = newLoanId,
+                PnBranchId = dto.PnBranchId,
+                Status = dto.Status,
+                VLoanCode = dto.VLoanCode,
+                VLoanName = dto.VLoanName
 
-            return CreatedAtAction("GetPaymLoan", new { id = paymLoan.PnCompanyid }, paymLoan);
+            };
+            context.PaymLoans.Add(newLoan);
+            await context.SaveChangesAsync();
+            return Ok(newLoan);
         }
-
-        // DELETE: api/PaymLoans/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePaymLoan(int id)
+        [HttpPut("{companyId}/{loanId}")]
+        public async Task<IActionResult> Update(int companyId,int loanId,PaymLoanDto dto)
         {
-            var paymLoan = await _context.PaymLoans.FindAsync(id);
-            if (paymLoan == null)
-            {
+            using var context = GetTenantContext();
+            var existing = await context.PaymLoans.FindAsync(companyId, loanId);
+            if (existing == null)
                 return NotFound();
-            }
-
-            _context.PaymLoans.Remove(paymLoan);
-            await _context.SaveChangesAsync();
-
+            existing.PnBranchId = dto.PnBranchId;
+            existing.Status = dto.Status;
+            existing.VLoanCode = dto.VLoanCode;
+            existing.VLoanName = dto.VLoanName;
+            await context.SaveChangesAsync();
+            return Ok(existing);
+        }
+        [HttpDelete("{companyId}/{loanId}")]
+        public async Task<IActionResult> Delete(int companyId,int loanId)
+        {
+            using var context = GetTenantContext();
+            var existing = await context.PaymLoans.FindAsync(companyId, loanId);
+            if (existing == null)
+                return NotFound();
+            context.PaymLoans.Remove(existing);
+            await context.SaveChangesAsync();
             return NoContent();
         }
 
-        private bool PaymLoanExists(int id)
-        {
-            return _context.PaymLoans.Any(e => e.PnCompanyid == id);
-        }
+
+
     }
 }
