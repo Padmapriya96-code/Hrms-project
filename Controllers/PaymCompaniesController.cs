@@ -142,7 +142,8 @@ namespace HRMSAPPLICATION.Controllers
         private HrmsystemContext GetTenantContext()
         {
             // ✅ SECURE: Automatically extracts dbName from the JWT "DbName" claim
-            // No more Request.Headers["X-Database-Name"]
+            // No more Request.Headers["X-Database-Name
+            //   // No more Request.Headers["X-Database-Name"
             return _factory.CreateFromUser(User);
         }
 
