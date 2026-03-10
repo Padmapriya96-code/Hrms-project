@@ -34,13 +34,17 @@ import Navbar from "../../Home Page-comapny/Navbar1";
 import Sidenav from "../../Home Page-comapny/Sidenav1";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
+import { Server } from "lucide-react";
+import axios from "axios";
+
+
 
 export default function LoanMaster() {
   const navigate = useNavigate();
   const [company, setCompany] = useState([]);
   const [branch, setBranch] = useState([]);
   const [pnCompanyId, setPnCompanyId] = useState("");
-  const [isloggedin, setIsloggedin] = useState(sessionStorage.getItem("user"));
+  const [isloggedin, setIsloggedin] = useState(sessionStorage.getItem("auth"));
   const [loanData, setLoanData] = useState([]);
   const [loanTypes, setLoanTypes] = useState([]);
   const [openLoanTypeDialog, setOpenLoanTypeDialog] = useState(false);
@@ -50,35 +54,50 @@ export default function LoanMaster() {
   const [editLoanTypeId, setEditLoanTypeId] = useState(null);
   const [editLoanData, setEditLoanData] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [loanId, setLoanId] = useState(""); // State to hold the selected LoanID for slabs
   const databaseName = sessionStorage.getItem("databaseName"); // ✅ dynamic DB name
+  const[companyName,setCompanyName]=useState("");
+  const authStr=sessionStorage.getItem("auth");
+      const auth=authStr?JSON.parse(authStr):null;
+      const token=auth?.token;
+      ServerConfig.url = "https://localhost:7266/api";
 
   // Fetch Company
   useEffect(() => {
     async function getData() {
+      if(!token){
+        toast.error("User not authenticated. Please log in.");
+        return;
+      }
       try {
-        const companyData = await postRequest(ServerConfig.url, REPORTS, {
-          query: `SELECT * FROM [${databaseName}].[dbo].[paym_Company]
-        WHERE company_user_id = '${isloggedin}'`,
+        const companyData = await axios.get(`${ServerConfig.url}/PaymCompanies/by-company`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
+        console.log("Company Data Fetched:", companyData.data);
         setCompany(companyData.data);
-        if (companyData.data.length > 0) {
-          setPnCompanyId(companyData.data[0].pn_CompanyID);
+        if(companyData.data.length>0){
+          const companyId = companyData.data[0].pnCompanyId || companyData.data[0].PnCompanyId;
+          setPnCompanyId(companyId);
+          console.log("Company ID set to:", companyId);
+          setCompanyName(companyData.data[0].companyName || companyData.data[0].CompanyName);
         }
       } catch (error) {
         console.error("Error fetching company data:", error);
       }
     }
     getData();
-  }, [isloggedin]);
+  }, [isloggedin, token]);
 
   const columns = [
     { field: "CompanyName", headerName: "COMPANY NAME", width: 223 },
-    { field: "v_LoanName", headerName: "LOAN NAME", width: 228 },
-    { field: "v_LoanCode", headerName: "LOAN CODE", width: 206 },
-    { field: "v_LoanType", headerName: "LOAN TYPE", width: 206 },
+    { field: "vLoanName", headerName: "LOAN NAME", width: 228 },
+    { field: "vLoanCode", headerName: "LOAN CODE", width: 206 },
+    { field: "vLoanType", headerName: "LOAN TYPE", width: 206 },
     { field: "status", headerName: "STATUS", width: 206 },
     {
-      field: "BranchName",
+      field: "branchName",
       headerName: "BRANCH NAME",
       width: 206,
       cellClassName: "branch-column-cell",
@@ -109,11 +128,23 @@ export default function LoanMaster() {
 
   // Fetch Branch
   useEffect(() => {
+    // ✅ Stop if companyId is missing
+      if (!pnCompanyId) {
+        console.log("Skipping branch fetch - no pnCompanyId");
+        return;
+      }
+    
+      // ✅ Stop if token is missing
+      if (!token) {
+        toast.error("User not logged in");
+        return;
+      }
     async function getData() {
       try {
-        const branchData = await postRequest(ServerConfig.url, REPORTS, {
-          query: `SELECT * FROM [${databaseName}].[dbo].[paym_Branch]
-        WHERE pn_CompanyID = '${pnCompanyId}'`,
+        const branchData = await axios.get(`${ServerConfig.url}/PaymBranches/by-Company/${pnCompanyId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
         setBranch(branchData.data);
       } catch (error) {
@@ -121,24 +152,27 @@ export default function LoanMaster() {
       }
     }
     if (pnCompanyId) getData();
-  }, [pnCompanyId]);
+  }, [pnCompanyId, token]);
 
   // Fetch Loans
   useEffect(() => {
     const fetchLoanData = async () => {
       try {
-        const response = await postRequest(ServerConfig.url, REPORTS, {
-          query: `SELECT pn_Companyid, v_LoanName, v_LoanCode, status, Pn_BranchID, v_LoanType FROM [${databaseName}].[dbo].[paym_Loan] WHERE pn_Companyid = '${pnCompanyId}'`,
+        const response = await axios.get(`${ServerConfig.url}/PaymLoans/${pnCompanyId}/${loanId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
+        
         const modifiedData = response.data.map((loan) => ({
           ...loan,
           CompanyName:
-            company.find((c) => c.pn_CompanyID === loan.pn_Companyid)
+            company.find((c) => c.pnCompanyId=== loan.pnCompanyid)
               ?.CompanyName || "Unknown Company",
           BranchName:
-            branch.find((b) => b.pn_BranchID === loan.Pn_BranchID)
+            branch.find((b) => b.pnBranchId=== loan.PnBranchId)
               ?.BranchName || "Unknown Branch",
-          id: `${loan.pn_Companyid}-${loan.v_LoanCode}`,
+          id: `${loan.pnCompanyid}-${loan.vLoanCode}`,
         }));
         setLoanData(modifiedData);
       } catch (error) {
@@ -146,7 +180,7 @@ export default function LoanMaster() {
       }
     };
     if (pnCompanyId) fetchLoanData();
-  }, [company, branch]);
+  }, [company, branch, pnCompanyId, token, loanId]);
 
   // Edit Loan Record
   // const handleEditLoan = (loan) => {
@@ -254,8 +288,10 @@ export default function LoanMaster() {
   const fetchLoanTypes = async () => {
     if (!pnCompanyId) return;
     try {
-      const res = await postRequest(ServerConfig.url, REPORTS, {
-        query: `SELECT * FROM [${databaseName}].[dbo].[paym_LoanTypeMaster] WHERE pn_CompanyID = '${pnCompanyId}'`,
+      const res = await axios.get(`${ServerConfig.url}/PaymLoanTypesMaster`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
       });
       setLoanTypes(res.data);
     } catch (err) {
@@ -373,10 +409,10 @@ export default function LoanMaster() {
 
   // Edit Loan Type
   const handleEditLoanType = (loanType) => {
-    setLoanTypeName(loanType.v_LoanTypeName);
+    setLoanTypeName(loanType.vLoanTypeName);
     setLoanTypeStatus(loanType.status);
     setEditMode(true);
-    setEditLoanTypeId(loanType.pn_LoanTypeID);
+    setEditLoanTypeId(loanType.pnLoanTypeId);
   };
 
   // Form Validation
@@ -533,8 +569,8 @@ export default function LoanMaster() {
                             <TextField
                               value={
                                 company.find(
-                                  (c) => c.pn_CompanyID === values.pnCompanyId
-                                )?.CompanyName || ""
+                                  (c) => c.pnCompanyId === values.pnCompanyId
+                                )?.companyName || ""
                               }
                               variant="outlined"
                               fullWidth
@@ -626,10 +662,10 @@ export default function LoanMaster() {
                             >
                               {branch.map((b) => (
                                 <MenuItem
-                                  key={b.pn_BranchID}
-                                  value={b.pn_BranchID}
+                                  key={b.pnBranchId}
+                                  value={b.pnBranchId}
                                 >
-                                  {b.BranchName}
+                                  {b.branchName}
                                 </MenuItem>
                               ))}
                             </Select>
@@ -792,10 +828,10 @@ export default function LoanMaster() {
                               {Array.isArray(loanTypes) &&
                                 loanTypes.map((type) => (
                                   <MenuItem
-                                    key={type.pn_LoanTypeID}
-                                    value={type.pn_LoanTypeID}
+                                    key={type.pnLoanTypeId}
+                                    value={type.pnLoanTypeId}
                                   >
-                                    {type.v_LoanTypeName}
+                                    {type.vLoanTypeName}
                                   </MenuItem>
                                 ))}{" "}
                             </Select>{" "}
@@ -892,7 +928,7 @@ export default function LoanMaster() {
                   rows={loanData}
                   columns={columns}
                   className="custom-row-height"
-                  getRowId={(row) => `${row.pn_Companyid}-${row.v_LoanCode}`}
+                  getRowId={(row) => `${row.pnCompanyid}-${row.vLoanCode}`}
                   getRowClassName={(params) =>
                     params.indexRelativeToCurrentPage % 2 === 0
                       ? "even-row"
@@ -930,9 +966,9 @@ export default function LoanMaster() {
             fullWidth
             margin="dense"
             label="Loan Name"
-            value={editLoanData?.v_LoanName || ""}
+            value={editLoanData?.vLoanName || ""}
             onChange={(e) =>
-              setEditLoanData({ ...editLoanData, v_LoanName: e.target.value })
+              setEditLoanData({ ...editLoanData, vLoanName: e.target.value })
             }
           />
           <FormControl fullWidth margin="dense">
@@ -942,16 +978,16 @@ export default function LoanMaster() {
               onChange={(e) =>
                 setEditLoanData({
                   ...editLoanData,
-                  v_LoanTypeId: e.target.value, // store ID
-                  v_LoanType: loanTypes.find(
-                    (t) => t.pn_LoanTypeID === e.target.value
-                  )?.v_LoanTypeName, // optional: keep name for display
+                  vLoanTypeId: e.target.value, // store ID
+                  vLoanType: loanTypes.find(
+                    (t) => t.pnLoanTypeId === e.target.value
+                  )?.vLoanTypeName, // optional: keep name for display
                 })
               }
             >
               {loanTypes.map((type) => (
-                <MenuItem key={type.pn_LoanTypeID} value={type.pn_LoanTypeID}>
-                  {type.v_LoanTypeName}
+                <MenuItem key={type.pnLoanTypeId} value={type.pnLoanTypeId}>
+                  {type.vLoanTypeName}
                 </MenuItem>
               ))}
             </Select>
@@ -1022,9 +1058,9 @@ export default function LoanMaster() {
             Existing Loan Types{" "}
           </Typography>{" "}
           <DataGrid
-            rows={(loanTypes || []).map((t) => ({ ...t, id: t.pn_LoanTypeID }))}
+            rows={(loanTypes || []).map((t) => ({ ...t, id: t.pnLoanTypeId }))}
             columns={[
-              { field: "v_LoanTypeName", headerName: "Loan Type", width: 200 },
+              { field: "vLoanTypeName", headerName: "Loan Type", width: 200 },
               { field: "status", headerName: "Status", width: 150 },
               {
                 field: "actions",
@@ -1043,7 +1079,7 @@ export default function LoanMaster() {
                     <IconButton
                       color="error"
                       onClick={() =>
-                        handleDeleteLoanType(params.row.pn_LoanTypeID)
+                        handleDeleteLoanType(params.row.pnLoanTypeId)
                       }
                     >
                       {" "}

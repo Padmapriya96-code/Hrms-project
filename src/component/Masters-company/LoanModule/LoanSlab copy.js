@@ -26,6 +26,8 @@ import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import { toast } from "react-toastify";
+import axios from "axios";
+
 
 const CTCSlabTable = () => {
   const [rows, setRows] = useState([]);
@@ -37,48 +39,58 @@ const CTCSlabTable = () => {
   const [loading, setLoading] = useState(false);
   const [editingRowId, setEditingRowId] = useState(null);
 
-  const user = sessionStorage.getItem("user");
+  const user = sessionStorage.getItem("auth");
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const databaseName = sessionStorage.getItem("databaseName"); // ✅ dynamic DB name
+  const authStr=sessionStorage.getItem("auth");
+      const auth=authStr?JSON.parse(authStr):null;
+      const token=auth?.token;
+      ServerConfig.url = "https://localhost:7266/api";
 
   // Fetch company info
   useEffect(() => {
     async function fetchCompanyData() {
+      if(!token){
+        toast.error("Please login to access");
+        return;
+      }
       try {
-        const companyData = await postRequest(ServerConfig.url, REPORTS, {
-          query: `SELECT pn_CompanyID, CompanyName 
-        FROM [${databaseName}].[dbo].[paym_Company]
-        WHERE company_user_id = '${user}'`,
-
+        const companyData = await axios.get(`${ServerConfig.url}/PaymCompanies/by-User`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
+
+       
         if (companyData.data.length > 0) {
-          setCompanyID(companyData.data[0].pn_CompanyID);
-          setCompanyName(companyData.data[0].CompanyName);
+          setCompanyID(companyData.data[0].pnCompanyId||companyData.data[0].PnCompanyId); // handle
+          setCompanyName(companyData.data[0].companyName||companyData.data[0].CompanyName); // handle case sensitivity  
         }
       } catch (error) {
         console.error("Error fetching company data:", error);
-        alert("Failed to fetch company data.");
+       
       }
     }
     fetchCompanyData();
-  }, [user]);
+  }, [user, token]);
 
   // Fetch branch info
   useEffect(() => {
     async function fetchBranchData() {
       if (!companyID) return;
       try {
-        const branchData = await postRequest(ServerConfig.url, REPORTS, {
-          query: `SELECT * 
-        FROM [${databaseName}].[dbo].[paym_Branch]
-        WHERE pn_CompanyID = '${companyID}'`,
+        const branchData = await 
+        axios.get(`${ServerConfig.url}/PaymBranches/by-Company/${companyID}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
 
         });
         setBranches(branchData.data);
         if (branchData.data.length > 0) {
-          setBranchID(branchData.data[0].pn_BranchID);
+          setBranchID(branchData.data[0].pnBranchId);
         }
       } catch (error) {
         console.error("Error fetching branch data:", error);
@@ -86,7 +98,7 @@ const CTCSlabTable = () => {
       }
     }
     fetchBranchData();
-  }, [companyID]);
+  }, [companyID, token]);
 
   // Fetch loans list from Loan Master (LoanID + LoanName)
   useEffect(() => {
@@ -117,22 +129,19 @@ const CTCSlabTable = () => {
     if (!companyID || !branchID) return;
     setLoading(true);
     try {
-      const ctcSlabData = await postRequest(ServerConfig.url, REPORTS, {
-        query: `
-  SELECT CTCSlabID, LoanID, MinCTC, MaxCTC, MaxLoanAmount, InterestRate
-  FROM [${databaseName}].[dbo].[CTCSlab]
-  WHERE pn_CompanyID = '${companyID}' AND pn_BranchID = '${branchID}'
-`,
+      const ctcSlabData = await axios.get(`${ServerConfig.url}/CTCSlabController`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
 
-      });
-
+        });
       const formattedRows = (ctcSlabData.data || []).map((row, index) => {
         const loanMatch = loans.find((l) => l.LoanID === row.LoanID);
         return {
           id: row.CTCSlabID || `tmp-${index + 1}`,
           CTCSlabID: row.CTCSlabID,
           LoanID: row.LoanID || "",
-          LoanName: loanMatch ? loanMatch.v_LoanName : "", // ✅ bind readable name
+          LoanName: loanMatch ? loanMatch.vLoanName : "", // ✅ bind readable name
           MinCTC: row.MinCTC,
           MaxCTC: row.MaxCTC,
           MaxLoanAmount: row.MaxLoanAmount,
@@ -357,7 +366,7 @@ const CTCSlabTable = () => {
             "MaxCTC",
             "MaxLoanAmount",
             "InterestRate",
-          ].some((key) => existingRow[key] != row[key]);
+          ].some((key) => existingRow[key] !== row[key]);
           if (!isChanged) continue;
 
           queries.push(`
@@ -618,10 +627,10 @@ const CTCSlabTable = () => {
                   >
                     {branches.map((branch) => (
                       <MenuItem
-                        key={branch.pn_BranchID}
-                        value={branch.pn_BranchID}
+                        key={branch.pnBranchId}
+                        value={branch.pnBranchId}
                       >
-                        {branch.BranchName}
+                        {branch.branchName}
                       </MenuItem>
                     ))}
                   </TextField>
@@ -652,14 +661,14 @@ const CTCSlabTable = () => {
                 Add Row
               </Button>
 
-              {/* <Button
+              <Button
                 variant="contained"
                 color="primary"
                 onClick={handleSaveAllRows}
                 disabled={loading}
               >
                 {loading ? "Saving..." : "Save All"}
-              </Button> */}
+              </Button>
             </Box>
           </Grid>
         </Box>
